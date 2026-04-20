@@ -16,13 +16,13 @@ This repository contains a comprehensive data science pipeline developed as a fi
 
 ### 👥 Team Members
 
-| Name                  | ID       |
-|----------------------|----------|
-|Abdelrahman Wael Mohammed| 0000000 |
-|Mariam Khaled Ahmed|23011528|
-|Mohammed Ahmed Abdelmaodoud|0000000|
-|                      |          |
-|                      |          |
-|                      |          |
+| Name                           | ID       | Role            |
+|--------------------------------|----------|-----------------|
+| Abdelrahman Wael Mohammed      | 0000000  |                 |
+| Mariam Khaled Ahmed            | 23011528 |                 |
+| Mohammed Ahmed Abdelmaodoud    | 0000000  |                 |
+|                                |          |                 |
+|                                |          |                 |
+|                                |          |                 |
 
     
