@@ -1,10 +1,12 @@
+
 import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
 import sys
-import __main__
+import types
 
+# تعريف الدالة
 def fix_adr(X):
     X = X.copy()
     if 'adr' in X.columns:
@@ -12,44 +14,49 @@ def fix_adr(X):
         X['adr'] = X['adr'].apply(lambda x: 0 if x < 0 else x)
     return X
 
+# تجهيز البيئة للموديل
+import __main__
 __main__.fix_adr = fix_adr
+sys.modules['__main__'].fix_adr = fix_adr
+
+if 'app' not in sys.modules:
+    app_module = types.ModuleType('app')
+    app_module.fix_adr = fix_adr
+    sys.modules['app'] = app_module
 
 @st.cache_resource
 def load_all_assets():
     return joblib.load('hotel_model_package.pkl')
 
-data_pkg = load_all_assets()
+try:
+    data_pkg = load_all_assets()
+except Exception as e:
+    st.error(f"Error: {e}")
+    st.stop()
 
-st.set_page_config(page_title="Hotel Booking Predictor", layout="wide")
+st.set_page_config(page_title="Hotel Predictor", layout="wide")
 st.title("Hotel Reservation Cancellation Predictor")
-st.markdown("---")
 
 col1, col2, col3 = st.columns(3)
-
 with col1:
-    st.subheader("Booking Info")
-    lead_time = st.number_input("Lead Time (Days)", min_value=0, value=30)
+    lead_time = st.number_input("Lead Time", min_value=0, value=30)
     market_segment = st.selectbox("Market Segment", ['Online TA', 'Offline TA/TO', 'Groups', 'Direct', 'Corporate'])
     deposit_type = st.selectbox("Deposit Type", ['No Deposit', 'Non Refund', 'Refundable'])
-
 with col2:
-    st.subheader("Financials")
-    adr = st.number_input("Average Daily Rate (ADR)", min_value=0.0, value=120.0)
+    adr = st.number_input("ADR", min_value=0.0, value=120.0)
     customer_type = st.selectbox("Customer Type", ['Transient', 'Contract', 'Transient-Party', 'Group'])
     total_special_requests = st.slider("Special Requests", 0, 5, 1)
-
 with col3:
-    st.subheader("Logistics")
     hotel = st.selectbox("Hotel Type", ["City Hotel", "Resort Hotel"])
-    distribution_channel = st.selectbox("Distribution Channel", ['TA/TO', 'Direct', 'Corporate', 'GDS'])
-    has_parking = st.selectbox("Required Parking?", ["No", "Yes"])
+    dist_channel = st.selectbox("Distribution Channel", ['TA/TO', 'Direct', 'Corporate', 'GDS'])
+    parking = st.selectbox("Required Parking?", ["No", "Yes"])
 
 if st.button("Predict Status", use_container_width=True):
     input_dict = {
         'lead_time': lead_time, 'adr': adr, 'total_of_special_requests': total_special_requests,
-        'has_parking': 1 if has_parking == "Yes" else 0, 'market_segment': market_segment,
+        'has_parking': 1 if parking == "Yes" else 0, 'market_segment': market_segment,
         'deposit_type': deposit_type, 'customer_type': customer_type, 'hotel': hotel,
-        'distribution_channel': distribution_channel, 'company_cancel_rate': 0.15,
+        'distribution_channel': dist_channel, 'company_cancel_rate': 0.15,
         'meal': 'BB', 'reserved_room_type': 'A', 'assigned_room_type': 'A',
         'arrival_date_month': 'July', 'arrival_date_year': 2017, 'arrival_date_week_number': 27,
         'arrival_date_day_of_month': 1, 'stays_in_weekend_nights': 0, 'stays_in_week_nights': 2,
@@ -59,29 +66,20 @@ if st.button("Predict Status", use_container_width=True):
         'total_nights': 2, 'total_people': 2, 'room_changed': 0,
         'agent_cancel_rate': 0.2, 'country_cancel_rate': 0.2
     }
-    
-    input_df = pd.DataFrame([input_dict])
-    
-    for col in input_df.columns:
+    df = pd.DataFrame([input_dict])
+    for col in df.columns:
         if col in data_pkg['num_cols']:
-            input_df[col] = pd.to_numeric(input_df[col], errors='coerce')
+            df[col] = pd.to_numeric(df[col], errors='coerce')
         else:
-            input_df[col] = input_df[col].astype(object)
+            df[col] = df[col].astype(object)
 
-    try:
-        processed = data_pkg['preprocessor'].transform(input_df)
-        selected = processed[:, data_pkg['selected_mask']]
-        compressed = data_pkg['pca'].transform(selected)
-        prediction = data_pkg['model'].predict(compressed)
-        
-        st.markdown("---")
-        if prediction[0] == 1:
-            st.error("### Prediction: CANCELED")
-            st.warning("The system identifies this as a high-risk booking.")
-        else:
-            st.success("### Prediction: NOT CANCELED")
-            st.balloons()
-            st.info("The system identifies this as a stable booking.")
-            
-    except Exception as e:
-        st.error(f"Error during prediction: {e}")
+    processed = data_pkg['preprocessor'].transform(df)
+    selected = processed[:, data_pkg['selected_mask']]
+    compressed = data_pkg['pca'].transform(selected)
+    prediction = data_pkg['model'].predict(compressed)
+
+    if prediction[0] == 1:
+        st.error("### Prediction: CANCELED")
+    else:
+        st.success("### Prediction: NOT CANCELED")
+        st.balloons()
