@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
+import sys
 
 def fix_adr(X):
     X = X.copy()
@@ -9,6 +10,9 @@ def fix_adr(X):
         X['adr'] = pd.to_numeric(X['adr'], errors='coerce').fillna(0)
         X['adr'] = X['adr'].apply(lambda x: 0 if x < 0 else x)
     return X
+
+import __main__
+__main__.fix_adr = fix_adr
 
 @st.cache_resource
 def load_all_assets():
@@ -41,7 +45,6 @@ with col3:
     has_parking = st.selectbox("Required Parking?", ["No", "Yes"])
 
 if st.button(" Predict Status", use_container_width=True):
-    # تجميع البيانات
     input_dict = {
         'lead_time': lead_time, 'adr': adr, 'total_of_special_requests': total_special_requests,
         'has_parking': 1 if has_parking == "Yes" else 0, 'market_segment': market_segment,
