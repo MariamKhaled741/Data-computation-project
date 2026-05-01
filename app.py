@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import numpy as np
 import sys
+import __main__
 
 def fix_adr(X):
     X = X.copy()
@@ -11,7 +12,6 @@ def fix_adr(X):
         X['adr'] = X['adr'].apply(lambda x: 0 if x < 0 else x)
     return X
 
-import __main__
 __main__.fix_adr = fix_adr
 
 @st.cache_resource
@@ -21,30 +21,30 @@ def load_all_assets():
 data_pkg = load_all_assets()
 
 st.set_page_config(page_title="Hotel Booking Predictor", layout="wide")
-st.title(" Hotel Reservation Cancellation Predictor")
+st.title("Hotel Reservation Cancellation Predictor")
 st.markdown("---")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader(" Booking Info")
+    st.subheader("Booking Info")
     lead_time = st.number_input("Lead Time (Days)", min_value=0, value=30)
     market_segment = st.selectbox("Market Segment", ['Online TA', 'Offline TA/TO', 'Groups', 'Direct', 'Corporate'])
     deposit_type = st.selectbox("Deposit Type", ['No Deposit', 'Non Refund', 'Refundable'])
 
 with col2:
-    st.subheader(" Financials")
+    st.subheader("Financials")
     adr = st.number_input("Average Daily Rate (ADR)", min_value=0.0, value=120.0)
     customer_type = st.selectbox("Customer Type", ['Transient', 'Contract', 'Transient-Party', 'Group'])
     total_special_requests = st.slider("Special Requests", 0, 5, 1)
 
 with col3:
-    st.subheader(" Logistics")
+    st.subheader("Logistics")
     hotel = st.selectbox("Hotel Type", ["City Hotel", "Resort Hotel"])
     distribution_channel = st.selectbox("Distribution Channel", ['TA/TO', 'Direct', 'Corporate', 'GDS'])
     has_parking = st.selectbox("Required Parking?", ["No", "Yes"])
 
-if st.button(" Predict Status", use_container_width=True):
+if st.button("Predict Status", use_container_width=True):
     input_dict = {
         'lead_time': lead_time, 'adr': adr, 'total_of_special_requests': total_special_requests,
         'has_parking': 1 if has_parking == "Yes" else 0, 'market_segment': market_segment,
@@ -76,10 +76,10 @@ if st.button(" Predict Status", use_container_width=True):
         
         st.markdown("---")
         if prediction[0] == 1:
-            st.error("###  Prediction: **CANCELED**")
+            st.error("### Prediction: CANCELED")
             st.warning("The system identifies this as a high-risk booking.")
         else:
-            st.success("###  Prediction: **NOT CANCELED**")
+            st.success("### Prediction: NOT CANCELED")
             st.balloons()
             st.info("The system identifies this as a stable booking.")
             
