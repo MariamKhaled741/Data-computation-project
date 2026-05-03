@@ -18,11 +18,11 @@ This repository contains a comprehensive data science pipeline developed as a fi
 
 | Name                           | ID       | Role            |
 |--------------------------------|----------|-----------------|
-| Abdelrahman Wael Mohammed      | 0000000  |                 |
-| Mariam Khaled Ahmed            | 23011528 |                 |
-| Mohammed Ahmed Abdelmaodoud    | 0000000  |                 |
-|                                |          |                 |
-|                                |          |                 |
-|                                |          |                 |
+| Abdelrahman Wael Mohammed      | 23011332  |Feature & PCA Engineer|
+| Mariam Khaled Ahmed            | 23011528 |Deployment & integration|
+| Mohammed Ahmed Abdelmaodoud    | 23011456  |Dataset Overview|
+|Moamen Mohammed Hassan|23011435|SVM & Pipeline Engineer|
+|Mohammed Ibrahim Basyouni|23011449|Data Cleaning|
+|Abdelrahman Sheief Shaker|23011317|EDA|
 
     
