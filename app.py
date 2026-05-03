@@ -3,6 +3,12 @@ import pandas as pd
 import joblib
 import numpy as np
 import sys
+import sklearn.compose
+
+# Patch for sklearn compatibility
+if not hasattr(sklearn.compose._column_transformer, '_RemainderColsList'):
+    class _RemainderColsList: pass
+    sklearn.compose._column_transformer._RemainderColsList = _RemainderColsList
 
 def fix_adr(X):
     X = X.copy()
