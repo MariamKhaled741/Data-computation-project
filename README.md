@@ -25,4 +25,8 @@ This repository contains a comprehensive data science pipeline developed as a fi
 |Mohammed Ibrahim Basyouni|23011449|Data Cleaning|
 |Abdelrahman Sheief Shaker|23011317|SVM & Pipeline Engineer|
 
+## Live Deployment
+
+This is the deployment link for our project:  
+https://data-computation-project-yqtywgughygwgznvj7haal.streamlit.app/
     
